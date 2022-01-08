@@ -20,23 +20,22 @@ type Config struct {
 }
 
 func Load() (cfg Config) {
-
 	cfg.Environment = cast.ToString(getOrReturnDefault("ENVIRONMENT", "develop"))
-	
+
 	cfg.PostgresHost = cast.ToString(getOrReturnDefault("POSTGRES_HOST", "localhost"))
 	cfg.PostgresPort = cast.ToInt(getOrReturnDefault("POSTGRES_PORT", 5432))
 	cfg.PostgresDatabase = cast.ToString(getOrReturnDefault("POSTGRES_DATABASE", "book_order"))
 	cfg.PostgresUser = cast.ToString(getOrReturnDefault("POSTGRES_USER", "muhriddin"))
 	cfg.PostgresPassword = cast.ToString(getOrReturnDefault("POSTGRES_PASSWORD", "1"))
-	
+
 	cfg.LogLevel = cast.ToString(getOrReturnDefault("LOG_LEVEL", "debug"))
-	
-	cfg.RPCPort = cast.ToString(getOrReturnDefault("RPC_PORT", ":50051"))
+
+	cfg.RPCPort = cast.ToString(getOrReturnDefault("RPC_PORT", ":9006"))
 
 	return
 }
 
-func getOrReturnDefault(key string, defaultValue interface{})interface{}{
+func getOrReturnDefault(key string, defaultValue interface{}) interface{} {
 	_, exists := os.LookupEnv(key)
 	if exists {
 		return os.Getenv(key)

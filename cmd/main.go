@@ -24,25 +24,24 @@ func main() {
 			log.Fatal("failed cleanup logger", logger.Error(err))
 		}
 	}(log)
-	
+
 	log.Info("main: sqlxConfig",
-		logger.String("host",cfg.PostgresHost),
-		logger.Int("port",cfg.PostgresPort),
-		logger.String("database",cfg.PostgresDatabase),
+		logger.String("host", cfg.PostgresHost),
+		logger.Int("port", cfg.PostgresPort),
+		logger.String("database", cfg.PostgresDatabase),
 	)
 
 	connDB, err := db.ConnectToDB(cfg)
-
 	if err != nil {
 		log.Fatal("failed to connect db", logger.Error(err))
 	}
 	pgStorage := storage.NewStoragePg(connDB)
 
-	orderService := service.NewOrderService(pgStorage,log)
+	orderService := service.NewOrderService(pgStorage, log)
 
-	lis,err := net.Listen("tcp",cfg.RPCPort)
+	lis, err := net.Listen("tcp", cfg.RPCPort)
 	if err != nil {
-		log.Fatal("Connection GRPC error",logger.Error(err))
+		log.Fatal("Connection GRPC error", logger.Error(err))
 	}
 
 	s := grpc.NewServer()
@@ -50,8 +49,8 @@ func main() {
 	pb.RegisterOrderServiceServer(s, orderService)
 	reflection.Register(s)
 	log.Info("Main: server running",
-		logger.String("port",cfg.RPCPort))	
-	if err := s.Serve(lis);err != nil {
-		log.Fatal("Error while listening",logger.Error(err))
+		logger.String("port", cfg.RPCPort))
+	if err := s.Serve(lis); err != nil {
+		log.Fatal("Error while listening", logger.Error(err))
 	}
 }
