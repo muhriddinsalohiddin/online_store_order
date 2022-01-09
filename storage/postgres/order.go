@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
+
 	pb "github.com/muhriddinsalohiddin/online_store_order/genproto/order_service"
 )
 
@@ -128,7 +129,7 @@ func (o *orderRepo) ListOrders(in pb.ListOrderReq) (pb.ListOrderResp, error) {
 	var orders pb.ListOrderResp
 	for rows.Next() {
 		var order pb.Order
-		err := rows.Scan(
+		err = rows.Scan(
 			&order.BookId,
 			&order.Description,
 			&order.CreatedAt,

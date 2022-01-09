@@ -3,14 +3,16 @@ package main
 import (
 	"net"
 
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
+
 	"github.com/muhriddinsalohiddin/online_store_order/config"
 	pb "github.com/muhriddinsalohiddin/online_store_order/genproto/order_service"
 	"github.com/muhriddinsalohiddin/online_store_order/pkg/db"
 	"github.com/muhriddinsalohiddin/online_store_order/pkg/logger"
 	"github.com/muhriddinsalohiddin/online_store_order/service"
+	grpcClient "github.com/muhriddinsalohiddin/online_store_order/service/grpc_client"
 	"github.com/muhriddinsalohiddin/online_store_order/storage"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
 )
 
 func main() {
@@ -37,7 +39,13 @@ func main() {
 	}
 	pgStorage := storage.NewStoragePg(connDB)
 
-	orderService := service.NewOrderService(pgStorage, log)
+	grpcClient, err := grpcClient.New(cfg)
+	if err != nil {
+		log.Error("error establishing grpc connection", logger.Error(err))
+		return
+	}
+
+	orderService := service.NewOrderService(pgStorage, log, grpcClient)
 
 	lis, err := net.Listen("tcp", cfg.RPCPort)
 	if err != nil {
