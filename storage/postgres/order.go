@@ -69,6 +69,7 @@ func (o *orderRepo) GetOrderById(in pb.GetOrderByIdReq) (pb.Order, error) {
 	var order pb.Order
 	err := o.db.QueryRow(`
 		SELECT
+			id,
 			book_id,
 			description,
 			created_at,
@@ -77,6 +78,7 @@ func (o *orderRepo) GetOrderById(in pb.GetOrderByIdReq) (pb.Order, error) {
 		WHERE id = $1
 		AND deleated_at IS NULL`, in.Id,
 	).Scan(
+		&order.Id,
 		&order.BookId,
 		&order.Description,
 		&order.CreatedAt,
@@ -111,6 +113,7 @@ func (o *orderRepo) ListOrders(in pb.ListOrderReq) (pb.ListOrderResp, error) {
 	offset := (in.Page - 1) * in.Limit
 	rows, err := o.db.Query(`
 		SELECT
+			id,
 			book_id,
 			description,
 			created_at,
@@ -130,6 +133,7 @@ func (o *orderRepo) ListOrders(in pb.ListOrderReq) (pb.ListOrderResp, error) {
 	for rows.Next() {
 		var order pb.Order
 		err = rows.Scan(
+			&order.Id,
 			&order.BookId,
 			&order.Description,
 			&order.CreatedAt,
